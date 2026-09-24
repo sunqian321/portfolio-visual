@@ -38,7 +38,7 @@ except ImportError:
 # 要用「未压缩」导出的那份 —— 压缩版把嵌入图降采样过，渲染成 2880px 母版就得
 # 插值放大，画面发糊。换 PDF 前先跑 tools/check_pdf.py 验清晰度。
 SRC_PDF = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(
-    "/Users/zaizai/Documents/作品集/投递/作品集pdf/孙茜-视觉设计师作品集(未压缩.pdf")
+    "/Users/zaizai/Documents/作品集/投递/作品集pdf/孙茜-视觉设计师作品集 旧版(未压缩.pdf")
 ROOT = Path(__file__).resolve().parent.parent
 OUT_DIR = ROOT / "assets" / "img"
 
@@ -54,7 +54,13 @@ MASTER_SCALE = 1.5
 TIER_WIDTHS = [1440, 1920, 2880]
 DEFAULT_TIER = 1920          # 不支持 srcset 的老浏览器兜底用这档
 
-WEBP_QUALITY = 80            # UI 界面里小字多，q76 会把笔画压糊
+# 2026-09-24 实测（第 5 页小字段，2880 档）：
+#   q80 233 KB → q70 195 KB，省 16%，相对母版 PSNR 仍 50.2 dB
+#   （40 dB 以上即视觉无损）；照片页省约 20%。
+# 原来写 80 是怕 q76 压糊小字，实测证明这条担心过头了 —— WebP 在高质量段
+# 的曲线很平，80 和 70 的差别小到看不出来。反过来也成立：**别指望靠降质量
+# 大幅瘦身**。真正的大头是 2880 那一档本身（占全站 50%），要省得多得砍档位。
+WEBP_QUALITY = 70
 
 # 切片高度，单位是「母版像素」。3000 @2880 ≈ 2000 @1920，
 # 即和旧版同样大小 —— 2880×3000 = 8.6M 像素，远低于 iOS Safari
